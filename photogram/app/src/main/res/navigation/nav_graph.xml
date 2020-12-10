@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/ImageGalleryFragment"
+    >
+
+    <fragment
+        android:id="@+id/ImageGalleryFragment"
+        android:name="edu.uw.jrrose.photogram.ImageGalleryFragment"
+        android:label="Image Gallery"
+        tools:layout="@layout/fragment_image_gallery">
+
+        <action
+            android:id="@+id/action_to_UploadScreenFragment"
+            app:destination="@id/UploadScreenFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/UploadScreenFragment"
+        android:name="edu.uw.jrrose.photogram.UploadScreenFragment"
+        android:label="Upload Screen"
+        tools:layout="@layout/fragment_upload_screen">
+
+    </fragment>
+
+</navigation>

@@ -24,6 +24,10 @@
         android:label="Upload Screen"
         tools:layout="@layout/fragment_upload_screen">
 
+        <action
+            android:id="@+id/action_to_ImageGalleryFragment"
+            app:destination="@id/ImageGalleryFragment"/>
+
     </fragment>
 
 </navigation>

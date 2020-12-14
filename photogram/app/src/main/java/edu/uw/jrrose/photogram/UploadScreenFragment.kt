@@ -11,20 +11,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.ktx.storageMetadata
-import java.io.File
 import java.io.IOException
 
 
@@ -35,10 +38,12 @@ import java.io.IOException
  */
 class UploadScreenFragment : Fragment() {
     private val viewModel by viewModels<LoginViewModel>()
+    private lateinit var imageDetails: Image
     private lateinit var navController: NavController
     private lateinit var rootView: View
     private lateinit var storage: FirebaseStorage
-//    private lateinit var photoUri: Uri
+    private lateinit var database: DatabaseReference
+
 
     companion object {
         const val TAG = "UploadScreenFragment"
@@ -46,8 +51,8 @@ class UploadScreenFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_upload_screen, container, false)
@@ -63,7 +68,6 @@ class UploadScreenFragment : Fragment() {
         viewModel.authenticationState.observe(viewLifecycleOwner, Observer {
             when (it) {
                 LoginViewModel.AuthenticationState.AUTHENTICATED -> {
-
                 }
                 else -> {
                     navController.popBackStack()
@@ -75,8 +79,10 @@ class UploadScreenFragment : Fragment() {
     // Trigger gallery selection for a photo
     fun onPickPhoto(view: View?) {
         // Create intent for picking a photo from the gallery
-        val intent = Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val intent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
@@ -92,7 +98,10 @@ class UploadScreenFragment : Fragment() {
             // check version of Android on device
             image = if (Build.VERSION.SDK_INT > 27 && photoUri != null) {
                 // on newer versions of Android, use the new decodeBitmap method
-                val source: ImageDecoder.Source = ImageDecoder.createSource(requireActivity().contentResolver, photoUri)
+                val source: ImageDecoder.Source = ImageDecoder.createSource(
+                    requireActivity().contentResolver,
+                    photoUri
+                )
                 ImageDecoder.decodeBitmap(source)
             } else {
                 // support older versions of Android by using getBitmap
@@ -142,10 +151,23 @@ class UploadScreenFragment : Fragment() {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-            } else {
-                // Handle failures
-                // ...
+                Log.v(TAG, "Uri: $downloadUri")
+
+                val uploadBtn = rootView.findViewById<Button>(R.id.upload_button)
+                uploadBtn.setOnClickListener {
+                    recordImageDetails(downloadUri!!)
+                    findNavController().navigate(R.id.ImageGalleryFragment)
+                }
             }
         }
+    }
+
+    private fun recordImageDetails(downloadUri: Uri) {
+        database = Firebase.database.reference
+        val caption = rootView.findViewById<EditText>(R.id.image_caption).text.toString()
+        val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
+        imageDetails = Image(downloadUri.toString(), caption, currentUser, null)
+        Log.v(TAG, "${imageDetails.imageCaption}")
+        database.push().setValue(imageDetails)
     }
 }

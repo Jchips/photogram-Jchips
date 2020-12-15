@@ -1,5 +1,7 @@
 package edu.uw.jrrose.photogram
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -67,8 +69,10 @@ class ImageGalleryFragment : Fragment() {
         val adapter = FirebaseImageAdapter(options)
         val recycler: RecyclerView = rootView.findViewById<RecyclerView>(R.id.images_list)
         recycler.layoutManager = LinearLayoutManager(context)
+        val topSpacingDecoration = TopSpacingItemDecoration(30)
+        recycler.addItemDecoration(topSpacingDecoration)
         recycler.adapter = adapter
-
+//        rootView.setBackgroundColor(Color.parseColor("#EBEBEB"))
         onStart(adapter)
         observeAuthenticationState(rootView, adapter)
 
@@ -143,12 +147,53 @@ class ImageGalleryFragment : Fragment() {
             Glide.with(this@ImageGalleryFragment)
                 .load(model.imageUrl)
                 .into(holder.imageView)
+
+            val imageRef = getRef(position)
+            holder.imageBtn.setOnClickListener {
+                if (model.likes != null) {
+                    for ((k, v) in model.likes!!) {
+                        if (k == model.uid) {
+                            model.likes = null
+                            imageRef.setValue(model)
+//                            holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
+                        } else {
+                            val imageLikes = mutableMapOf(model.uid!! to true)
+                            model.likes = imageLikes
+                            imageRef.setValue(model)
+//                            holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
+                        }
+                    }
+                } else {
+                    Log.v(TAG, "imageref: $imageRef")
+                    val imageLikes = mutableMapOf(model.uid!! to true)
+                    model.likes = imageLikes
+                    imageRef.setValue(model)
+                    Log.v(TAG, "${model.likes}")
+//                    holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
+                }
+            }
+            if (model.likes != null) {
+                for ((k, v) in model.likes!!) {
+                    if (k == model.uid) {
+                        holder.imageBtn.imageTintList =
+                            ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
+                    }
+//                    else {
+////                        holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
+//                    }
+                }
+            }
+//            else {
+////                holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
+//            }
+            Log.v(TAG, "Likes: ${model.likes?.size}") // Delete later
             val imageLikes: String = if (model.likes?.size  == null) {
-                "Likes: 0"
+                "0"
             } else {
-                "Likes: ${model.likes!!.size}"
+                "${model.likes!!.size}"
             }
             holder.numberOfLikes.text = imageLikes
+
         }
     }
 }

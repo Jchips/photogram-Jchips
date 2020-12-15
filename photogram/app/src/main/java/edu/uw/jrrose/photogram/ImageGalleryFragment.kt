@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -82,7 +83,6 @@ class ImageGalleryFragment : Fragment() {
         super.onStart();
         adapter.startListening();
     }
-//    Similarly, the stopListening() call removes the event listener and all data in the adapter. Call this method when the containing Activity or Fragment stops:
 
     fun onStop(adapter: FirebaseImageAdapter) {
         super.onStop();
@@ -124,8 +124,6 @@ class ImageGalleryFragment : Fragment() {
     inner class FirebaseImageAdapter(options: FirebaseRecyclerOptions<Image>) : FirebaseRecyclerAdapter<Image, FirebaseImageAdapter.ViewHolder>(
         options
     ) {
-//        private val options: FirebaseRecyclerOptions<Image>
-
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val imageView: ImageView = view.findViewById<ImageView>(R.id.image_item)
             val caption: TextView = view.findViewById<TextView>(R.id.caption_item)
@@ -141,8 +139,7 @@ class ImageGalleryFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Image) {
-            // Bind the Chat object to the ChatHolder
-            // ...
+            val userUid = FirebaseAuth.getInstance().currentUser!!.uid
             holder.caption.text = model.imageCaption
             Glide.with(this@ImageGalleryFragment)
                 .load(model.imageUrl)
@@ -150,42 +147,35 @@ class ImageGalleryFragment : Fragment() {
 
             val imageRef = getRef(position)
             holder.imageBtn.setOnClickListener {
-                if (model.likes != null) {
-                    for ((k, v) in model.likes!!) {
-                        if (k == model.uid) {
-                            model.likes = null
-                            imageRef.setValue(model)
-//                            holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
-                        } else {
-                            val imageLikes = mutableMapOf(model.uid!! to true)
-                            model.likes = imageLikes
-                            imageRef.setValue(model)
-//                            holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
-                        }
+                if (model.likes != null) { // if pic has likes
+                    if(isLiked(model, userUid)) { // if pic is already liked
+                        model.likes!!.remove(userUid)
+                        imageRef.setValue(model)
+                    } else { // if pic isn't already liked
+                        model.likes!!.put(userUid, true)
+                        imageRef.setValue(model)
                     }
-                } else {
-                    Log.v(TAG, "imageref: $imageRef")
-                    val imageLikes = mutableMapOf(model.uid!! to true)
+                } else { // if pic has no likes
+                    Log.v(TAG, "imageref: $imageRef") // delete later
+                    val imageLikes = mutableMapOf(userUid to true)
                     model.likes = imageLikes
                     imageRef.setValue(model)
                     Log.v(TAG, "${model.likes}")
 //                    holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
                 }
             }
-            if (model.likes != null) {
-                for ((k, v) in model.likes!!) {
-                    if (k == model.uid) {
-                        holder.imageBtn.imageTintList =
-                            ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
-                    }
-//                    else {
-////                        holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
-//                    }
+
+            // Color of like btn
+            if (model.likes != null) { // if pic is liked
+                if (isLiked(model, userUid)) { // Check if one of the likes is from the user
+                    holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
+                } else {
+                    holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.light_gray))
                 }
             }
-//            else {
-////                holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.fui_transparent))
-//            }
+            else {
+                holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.light_gray))
+            }
             Log.v(TAG, "Likes: ${model.likes?.size}") // Delete later
             val imageLikes: String = if (model.likes?.size  == null) {
                 "0"
@@ -193,7 +183,15 @@ class ImageGalleryFragment : Fragment() {
                 "${model.likes!!.size}"
             }
             holder.numberOfLikes.text = imageLikes
+        }
 
+        private fun isLiked(model: Image, userUid: String): Boolean {
+            for((k,v) in model.likes!!) {
+                if(k == userUid) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }

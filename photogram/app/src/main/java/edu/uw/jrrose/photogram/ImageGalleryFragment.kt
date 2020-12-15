@@ -158,19 +158,27 @@ class ImageGalleryFragment : Fragment() {
                 }
 
                 // Color of like btn
-                if (model.likes != null) { // if pic is liked
+                if (model.likes != null) { // if pic is already liked
                     if (isLiked(model, userUid)) { // Check if one of the likes is from the user
                         holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
                     } else {
                         holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.light_gray))
                     }
                 }
-                else {
+                else { // if pic isn't liked at all
                     holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.light_gray))
+                }
+
+                // Delete image on long press
+                holder.imageView.setOnLongClickListener {
+                    if (userUid == model.uid) {
+                     imageRef.setValue(null)
+                    }
+                    true
                 }
             }
 
-            Log.v(TAG, "Likes: ${model.likes?.size}") // Delete later
+            // Likes text
             val imageLikes: String = if (model.likes?.size  == null) {
                 "0"
             } else {

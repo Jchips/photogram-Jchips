@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "951552455235",
+    "project_id": "photogram-jrrose",
+    "storage_bucket": "photogram-jrrose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951552455235:android:314f641ad74808928c5af6",
+        "android_client_info": {
+          "package_name": "edu.uw.jrrose.photogram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "951552455235-ebibokbi34cebkocq45jfll61encldti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA13snKoOLSime2WKVNNr4GDG1Es8Ha4uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "951552455235-ebibokbi34cebkocq45jfll61encldti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

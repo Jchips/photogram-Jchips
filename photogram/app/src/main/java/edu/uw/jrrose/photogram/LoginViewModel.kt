@@ -1,15 +1,10 @@
 package edu.uw.jrrose.photogram
 
 
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import com.google.firebase.auth.FirebaseUser
 
 class LoginViewModel : ViewModel() {
-    private val TAG = "LoginViewModel"
 
     enum class AuthenticationState {
         AUTHENTICATED, UNAUTHENTICATED
@@ -22,8 +17,4 @@ class LoginViewModel : ViewModel() {
             AuthenticationState.UNAUTHENTICATED
         }
     }
-
-//    val uid = FirebaseUserLiveData().map { user ->
-//        user?.uid
-//    }
 }

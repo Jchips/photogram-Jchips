@@ -26,7 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"/>
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@string/post_image_description" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,7 +56,8 @@
                     android:layout_marginTop="11dp"
                     android:layout_marginEnd="10dp"
                     android:background="@color/white"
-                    android:src="@drawable/ic_fab" />
+                    android:src="@drawable/ic_fab"
+                    android:contentDescription="@string/like_btn" />
 
             </LinearLayout>
         </LinearLayout>

@@ -5,12 +5,10 @@
         android:id="@+id/login_btn"
         android:title="@string/login"
         app:showAsAction="ifRoom"
-
         />
     <item
         android:id="@+id/logout_btn"
         android:title="@string/logout"
         app:showAsAction="ifRoom"
-
         />
 </menu>

@@ -129,7 +129,6 @@ class UploadScreenFragment : Fragment() {
 
     private fun uploadImage(photoUri: Uri) {
         val storageRef: StorageReference = storage.reference
-//        var file = Uri.fromFile(File("C:\\Users\\jelan\\OneDrive\\Pictures\\Camera Roll"))
         val photoRef = storageRef.child("images/picture${photoUri.lastPathSegment}.jpg")
         val uploadTask = photoRef.putFile(photoUri)
 
@@ -137,10 +136,7 @@ class UploadScreenFragment : Fragment() {
         uploadTask.addOnFailureListener {
             Toast.makeText(context, "Image upload error", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener { taskSnapshot ->
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-//            val metaData = taskSnapshot.downloadUrl()
-            Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+            // Do smth if I want....
         }.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
@@ -151,7 +147,6 @@ class UploadScreenFragment : Fragment() {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-                Log.v(TAG, "Uri: $downloadUri")
 
                 val uploadBtn = rootView.findViewById<Button>(R.id.upload_button)
                 uploadBtn.setOnClickListener {
@@ -167,7 +162,6 @@ class UploadScreenFragment : Fragment() {
         val caption = rootView.findViewById<EditText>(R.id.image_caption).text.toString()
         val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
         imageDetails = Image(downloadUri.toString(), caption, currentUser, null)
-        Log.v(TAG, "${imageDetails.imageCaption}")
         database.push().setValue(imageDetails)
     }
 }

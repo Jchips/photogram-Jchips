@@ -8,6 +8,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.login_btn -> {
-//                Toast.makeText(this, "logged in", Toast.LENGTH_LONG).show()
                 login()
                 true
             }
@@ -46,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         // Choose authentication providers
         val providers = arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build())
-
 
         // Create and launch sign-in intent
         startActivityForResult(
@@ -87,18 +88,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-//        val btn = menu!!.findItem(R.id.login_btn)
         if (FirebaseAuth.getInstance().currentUser != null) {
-//            btn.title = "logout"
-//            val logoutUser = menu.findItem(R.id.logout_btn)
-//            logoutUser.isVisible = true
             menu!!.removeItem(R.id.login_btn)
-//            btn.setOnMenuItemClickListener {
-//                logout()
-//                true
-//            }
         } else {
-//            btn.title = "login"
             menu!!.removeItem(R.id.logout_btn)
         }
         return super.onPrepareOptionsMenu(menu)

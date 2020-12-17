@@ -1,7 +1,6 @@
 package edu.uw.jrrose.photogram
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,15 +28,10 @@ import com.google.firebase.ktx.Firebase
 class ImageGalleryFragment : Fragment() {
     private val viewModel by viewModels<LoginViewModel>()
     private lateinit var database: DatabaseReference
-//    private lateinit var options: FirebaseRecyclerOptions<Image>
-//    private lateinit var rootView: View
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        arguments?.let {
-//
-//        }
-//    }
+    companion object {
+        const val TAG = "ImageGalleryFragment"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,11 +69,6 @@ class ImageGalleryFragment : Fragment() {
         adapter.stopListening();
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        observeAuthenticationState(view)
-//    }
-
     private fun observeAuthenticationState(rootView: View, adapter: FirebaseImageAdapter) {
 
         val fab: FloatingActionButton = rootView.findViewById(R.id.fab)
@@ -89,7 +78,7 @@ class ImageGalleryFragment : Fragment() {
                     // Refresh the page once logged in
                     onStop(adapter)
                     onStart(adapter)
-                    fab.show() // Show add image icon
+                    fab.show() // Show add image btn
                     fab.setOnClickListener {
                         onStop(adapter)
                         findNavController().navigate(R.id.UploadScreenFragment)
@@ -104,10 +93,6 @@ class ImageGalleryFragment : Fragment() {
         })
     }
 
-    companion object {
-        const val TAG = "ImageGalleryFragment"
-    }
-
     inner class FirebaseImageAdapter(options: FirebaseRecyclerOptions<Image>) : FirebaseRecyclerAdapter<Image, FirebaseImageAdapter.ViewHolder>(
         options
     ) {
@@ -118,8 +103,6 @@ class ImageGalleryFragment : Fragment() {
             val numberOfLikes: TextView = view.findViewById(R.id.amount_of_likes)
         }
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
                 val view: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.image_list_item, parent, false)
                 return ViewHolder(view)
@@ -153,7 +136,6 @@ class ImageGalleryFragment : Fragment() {
                         model.likes = imageLikes
                         imageRef.setValue(model)
                         Log.v(TAG, "${model.likes}")
-//                    holder.imageBtn.imageTintList = ColorStateList.valueOf(context!!.getColor(R.color.colorAccent))
                     }
                 }
 

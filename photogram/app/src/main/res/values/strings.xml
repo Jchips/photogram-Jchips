@@ -3,4 +3,12 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="add_post">Add</string>
+
+    <string name="caption_hint">Add an image caption</string>
+    <string name="upload_btn">Upload</string>
+    <string name="upload_text">Upload image:</string>
+    <string name="users_image">User\'s image</string>
+
+    <string name="post_image_description">Posted image</string>
+    <string name="like_btn">Like button</string>
 </resources>

@@ -1,6 +1,5 @@
 package edu.uw.jrrose.photogram
 
-import android.net.Uri
 
 data class Image (
     var imageUrl: String?,
